@@ -4,10 +4,14 @@ from six import string_types
 from voluptuous import All, Any, Boolean, Coerce, Optional, Range, Required
 
 # Elasticsearch versions supported
-def version_max():
+def version_max(distribution):
+    if distribution == "opensearch":
+        return (2,0,0)
     """Return the maximum Elasticsearch version Curator supports"""
     return (7, 99, 99)
-def version_min():
+def version_min(distribution):
+    if distribution == "opensearch":
+        return (1,0,0)
     """Return the minimum Elasticsearch version Curator supports"""
     return (5, 0, 0)
 
