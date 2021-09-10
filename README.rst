@@ -1,8 +1,11 @@
 .. _readme:
 
 
-Curator
+Curator for Opensearch
 =======
+
+Slightly modified version of original Curator script, which supports Opensearch distribution
+--------------------------------------------------------------------------------------------
 
 Have indices in Elasticsearch? This is the tool for you!
 

@@ -698,6 +698,15 @@ def is_master_node(client):
     master_node_id = client.cluster.state(metric='master_node')['master_node']
     return my_node_id == master_node_id
 
+def get_distribution_type(client):
+    """
+    Return the ES distribution type, Opensearch\Elasticsearch\etc.
+
+    :arg client: An :class:`elasticsearch.Elasticsearch` client object
+    :rtype: string
+    """
+    return client.info()['version']['distribution']
+
 def check_version(client):
     """
     Verify version is within acceptable range.  Raise an exception if it is not.
@@ -705,17 +714,18 @@ def check_version(client):
     :arg client: An :class:`elasticsearch.Elasticsearch` client object
     :rtype: None
     """
+    distribution_type = get_distribution_type(client)
     version_number = get_version(client)
-    LOGGER.debug('Detected Elasticsearch version {0}'.format(".".join(map(str, version_number))))
-    if version_number >= settings.version_max() \
-        or version_number < settings.version_min():
+    LOGGER.debug('Detected Elasticsearch distribution {0} version {1}'.format(distribution_type,".".join(map(str, version_number))))
+    if version_number >= settings.version_max(distribution_type) \
+        or version_number < settings.version_min(distribution_type):
         LOGGER.error(
-            'Elasticsearch version {0} incompatible with this version of Curator '
-            '({1})'.format(".".join(map(str, version_number)), __version__)
+            'Elasticsearch distribution {0} version {1} incompatible with this version of Curator '
+            '({1})'.format(distribution_type,".".join(map(str, version_number)), __version__)
         )
         raise exceptions.CuratorException(
-            'Elasticsearch version {0} incompatible with this version of Curator '
-            '({1})'.format(".".join(map(str, version_number)), __version__)
+            'Elasticsearch distribution {0} version {1} incompatible with this version of Curator '
+            '({1})'.format(distribution_type,".".join(map(str, version_number)), __version__)
         )
 
 def check_master(client, master_only=False):
